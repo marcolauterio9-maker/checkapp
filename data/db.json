@@ -1,0 +1,181 @@
+{
+    "business":  {
+                     "primaryColor":  "#2563eb",
+                     "tagline":  "Servicios y reservas en línea",
+                     "about":  "",
+                     "instagramHandle":  "",
+                     "name":  "Nombre de tu negocio",
+                     "bannerPromo":  {
+                                         "active":  false,
+                                         "title":  "",
+                                         "desc":  ""
+                                     },
+                     "coverUrl":  "",
+                     "whatsapp":  "",
+                     "cabinNotes":  "",
+                     "address":  "",
+                     "backgroundColor":  "#f5f5f8",
+                     "mapCoordinates":  {
+                                            "lat":  0,
+                                            "lng":  0
+                                        },
+                     "secondaryColor":  "#0f172a",
+                     "timeZone":  "America/Mexico_City",
+                     "instagram":  "",
+                     "specialty":  "Agrega una descripción de tu negocio",
+                     "pageCopy":  {
+                                      "bookingStepDateTime":  "Fecha y hora",
+                                      "bookingStepInstructions":  "Pasos para reservar",
+                                      "catalogLink":  "Ver catálogo completo",
+                                      "tabSchedule":  "Horarios",
+                                      "bookingStepClient":  "Tus datos",
+                                      "tabServices":  "Servicios",
+                                      "homeWelcome":  "Agenda tu cita en línea",
+                                      "bookingTitle":  "Reservar una cita",
+                                      "featuredServices":  "Servicios destacados",
+                                      "tabGallery":  "Galería",
+                                      "bookingStepServices":  "Seleccionar servicio",
+                                      "reserveButton":  "Reservar ahora",
+                                      "tabReviews":  "Reseñas",
+                                      "scheduleTitle":  "Horario de atención",
+                                      "bookingConfirmationTitle":  "¡Solicitud de reserva recibida!"
+                                  },
+                     "bookingIntervalMinutes":  30,
+                     "currencySymbol":  "$",
+                     "currencyCode":  "MXN",
+                     "avatarUrl":  "",
+                     "phone":  "",
+                     "fontFamily":  "system",
+                     "showVerifiedBadge":  false
+                 },
+    "schedule":  {
+                     "0":  {
+                               "dayName":  "Domingo",
+                               "open":  "11:00",
+                               "close":  "16:00",
+                               "active":  false
+                           },
+                     "1":  {
+                               "dayName":  "Lunes",
+                               "open":  "10:00",
+                               "close":  "20:00",
+                               "active":  true
+                           },
+                     "2":  {
+                               "dayName":  "Martes",
+                               "open":  "10:00",
+                               "close":  "20:00",
+                               "active":  true
+                           },
+                     "3":  {
+                               "dayName":  "Miércoles",
+                               "open":  "10:00",
+                               "close":  "20:00",
+                               "active":  true
+                           },
+                     "4":  {
+                               "dayName":  "Jueves",
+                               "open":  "10:00",
+                               "close":  "20:00",
+                               "active":  true
+                           },
+                     "5":  {
+                               "dayName":  "Viernes",
+                               "open":  "10:00",
+                               "close":  "20:00",
+                               "active":  true
+                           },
+                     "6":  {
+                               "dayName":  "Sábado",
+                               "open":  "10:00",
+                               "close":  "19:00",
+                               "active":  true
+                           }
+                 },
+    "specialists":  [
+                        {
+                            "id":  "profesional-principal",
+                            "blockedDates":  [
+
+                                             ],
+                            "avatarUrl":  "",
+                            "active":  true,
+                            "bio":  "",
+                            "name":  "Profesional",
+                            "workDays":  [
+                                             1,
+                                             2,
+                                             3,
+                                             4,
+                                             5,
+                                             6
+                                         ],
+                            "title":  "Atención",
+                            "phone":  "",
+                            "workHours":  {
+                                              "1":  {
+                                                        "close":  "20:00",
+                                                        "active":  true,
+                                                        "open":  "10:00"
+                                                    },
+                                              "2":  {
+                                                        "close":  "20:00",
+                                                        "active":  true,
+                                                        "open":  "10:00"
+                                                    },
+                                              "3":  {
+                                                        "close":  "20:00",
+                                                        "active":  true,
+                                                        "open":  "10:00"
+                                                    },
+                                              "4":  {
+                                                        "close":  "20:00",
+                                                        "active":  true,
+                                                        "open":  "10:00"
+                                                    },
+                                              "5":  {
+                                                        "close":  "20:00",
+                                                        "active":  true,
+                                                        "open":  "10:00"
+                                                    },
+                                              "6":  {
+                                                        "close":  "19:00",
+                                                        "active":  true,
+                                                        "open":  "10:00"
+                                                    }
+                                          }
+                        }
+                    ],
+    "bookingSteps":  [
+                         {
+                             "description":  "Selecciona uno o varios servicios para comenzar.",
+                             "title":  "Elige un servicio"
+                         },
+                         {
+                             "description":  "Elige un día disponible y el horario que mejor te convenga.",
+                             "title":  "Selecciona fecha y hora"
+                         },
+                         {
+                             "description":  "Déjanos tus datos de contacto para solicitar la cita.",
+                             "title":  "Completa tus datos y confirma"
+                         }
+                     ],
+    "categories":  [
+                       {
+                           "id":  "cat-general",
+                           "name":  "Servicios"
+                       }
+                   ],
+    "services":  [
+
+                 ],
+    "gallery":  [
+
+                ],
+    "reviews":  [
+
+                ],
+    "appointments":  [
+
+                     ]
+}

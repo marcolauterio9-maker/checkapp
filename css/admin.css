@@ -1,0 +1,1532 @@
+/* ==========================================================================
+   ESTILOS DEL PANEL DE ADMINISTRACIÓN
+   ========================================================================== */
+
+:root {
+    --admin-primary: #7c3aed;
+    --admin-primary-hover: #6d28d9;
+    --admin-success: #28a745;
+    --admin-warning: #ffc107;
+    --admin-danger: #dc3545;
+    --admin-info: #17a2b8;
+    --admin-dark: #1e1e24;
+    --admin-bg: #f4f6f9;
+    --admin-card: #ffffff;
+    --admin-border: #e3e6ec;
+    --admin-text: #333333;
+    --admin-muted: #777777;
+    --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body.admin-body {
+    font-family: var(--font-stack);
+    background-color: var(--admin-bg);
+    color: var(--admin-text);
+    min-height: 100vh;
+}
+
+/* Modal de Autenticación por PIN */
+.auth-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(25, 25, 30, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.auth-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 32px 26px;
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+}
+
+.auth-card .avatar-icon {
+    width: 64px;
+    height: 64px;
+    background: #f5f3ff;
+    color: var(--admin-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 16px;
+}
+
+.auth-pin-input {
+    font-size: 28px;
+    letter-spacing: 10px;
+    text-align: center;
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--admin-border);
+    border-radius: 10px;
+    margin: 16px 0;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.auth-pin-input:focus {
+    border-color: var(--admin-primary);
+}
+
+/* Layout del Dashboard */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    width: 240px;
+    background: var(--admin-dark);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.sidebar-header {
+    padding: 20px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 14px 0;
+    list-style: none;
+}
+
+.sidebar-nav li a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: #bbbbbc;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.sidebar-nav li a:hover {
+    background: rgba(255,255,255,0.06);
+    color: #ffffff;
+}
+
+.sidebar-nav li.active a {
+    background: var(--admin-primary);
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btn-sidebar-action {
+    background: rgba(255,255,255,0.1);
+    color: #ffffff;
+    border: none;
+    padding: 9px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.btn-sidebar-action:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+/* Área de Contenido */
+.admin-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.admin-topbar {
+    background: #ffffff;
+    border-bottom: 1px solid var(--admin-border);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-topbar h1 {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.admin-content {
+    padding: 24px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Tarjetas de Métricas */
+.metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.metric-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid var(--admin-border);
+}
+
+.metric-label {
+    font-size: 12.5px;
+    color: var(--admin-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.metric-value {
+    font-size: 26px;
+    font-weight: 800;
+    margin-top: 4px;
+    color: #1a1a1c;
+}
+
+/* Filtros de Citas */
+.filter-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.filter-tab-btn {
+    background: #ffffff;
+    border: 1px solid var(--admin-border);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-tab-btn.active {
+    background: var(--admin-primary);
+    color: #ffffff;
+    border-color: var(--admin-primary);
+}
+
+/* Tabla de Citas */
+.admin-table-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid var(--admin-border);
+    overflow: hidden;
+}
+
+.booking-step-admin-row {
+    display: grid;
+    grid-template-columns: 38px minmax(180px, 1fr) minmax(220px, 2fr) auto;
+    gap: 10px;
+    align-items: start;
+    margin-bottom: 12px;
+}
+
+.booking-step-admin-row input,
+.booking-step-admin-row textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font: inherit;
+}
+
+.booking-step-admin-row textarea {
+    min-height: 42px;
+    resize: vertical;
+}
+
+.booking-step-admin-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.booking-step-admin-actions button {
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.booking-step-admin-actions button:disabled {
+    cursor: default;
+    opacity: 0.45;
+}
+
+.booking-step-admin-actions .btn-remove-booking-step {
+    color: #fff;
+    background: #dc3545;
+}
+
+@media (max-width: 768px) {
+    .booking-step-admin-row {
+        grid-template-columns: 28px minmax(0, 1fr);
+    }
+
+    .booking-step-admin-row textarea,
+    .booking-step-admin-actions {
+        grid-column: 2;
+    }
+}
+
+.schedule-days-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-x: auto;
+}
+
+.schedule-day-row {
+    display: grid;
+    grid-template-columns: minmax(130px, 1.3fr) repeat(4, minmax(105px, 1fr));
+    align-items: center;
+    gap: 10px;
+    min-width: 650px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.schedule-day-row input[type="time"] {
+    width: 100%;
+    min-width: 0;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.schedule-day-name {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.schedule-day-heading {
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    text-align: left;
+}
+
+.admin-table th {
+    background: #fafbfc;
+    padding: 12px 16px;
+    font-weight: 600;
+    color: #666;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f0f0f4;
+    vertical-align: middle;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.status-pendiente { background: #fff3cd; color: #856404; }
+.status-confirmada { background: #d4edda; color: #155724; }
+.status-completada { background: #d1ecf1; color: #0c5460; }
+.status-cancelada { background: #f8d7da; color: #721c24; }
+
+.table-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.btn-table-action {
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-table-action:hover {
+    opacity: 0.85;
+}
+
+.btn-action-wa {
+    background: #25d366;
+    color: #fff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-action-status {
+    background: #eef1f6;
+    color: #333;
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+    .admin-wrapper {
+        flex-direction: column;
+    }
+    .admin-sidebar {
+        width: 100%;
+    }
+    .sidebar-nav {
+        display: flex;
+        overflow-x: auto;
+        padding: 0;
+    }
+    .sidebar-nav li a {
+        padding: 10px 14px;
+        white-space: nowrap;
+    }
+    .admin-table-card {
+        overflow-x: auto;
+    }
+}
+
+.business-image-upload-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.business-image-upload,
+.business-gallery-editor {
+    padding: 14px;
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    background: #fff;
+}
+
+.business-image-upload label,
+.business-gallery-editor > label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.business-image-upload input[type="file"],
+.business-gallery-editor input[type="file"] {
+    width: 100%;
+    font-size: 13px;
+}
+
+.business-image-preview {
+    display: block;
+    max-width: 100%;
+    margin-top: 12px;
+    border: 1px solid var(--admin-border);
+    background: #f4f5f7;
+    object-fit: cover;
+}
+
+.business-image-avatar {
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+}
+
+.business-image-cover {
+    width: 100%;
+    height: 120px;
+    border-radius: 6px;
+}
+
+.business-image-remove,
+.business-gallery-item button {
+    margin-top: 9px;
+    padding: 6px 10px;
+    border: 1px solid #d5d9df;
+    border-radius: 5px;
+    background: #fff;
+    color: #4b5563;
+    cursor: pointer;
+}
+
+.business-gallery-editor {
+    margin-top: 16px;
+}
+
+.business-gallery-editor h3 {
+    margin: 0 0 12px;
+    font-size: 15px;
+}
+
+.business-gallery-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.business-gallery-item {
+    min-width: 0;
+    padding: 8px;
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+    background: #fff;
+}
+
+.business-gallery-item img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 4px;
+    background: #f4f5f7;
+    object-fit: cover;
+}
+
+.business-gallery-item span {
+    display: block;
+    overflow: hidden;
+    margin-top: 7px;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.business-gallery-item button {
+    margin-top: 6px;
+    font-size: 12px;
+}
+
+.business-gallery-empty {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* ==========================================================================\
+   ESTILOS DE TRABAJADORAS / ESPECIALISTAS
+   ========================================================================== */
+
+.specialists-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 14px;
+}
+
+.specialist-admin-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid var(--admin-border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.specialist-admin-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.spec-card-top {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.spec-admin-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--admin-primary);
+    flex-shrink: 0;
+}
+
+.spec-admin-info h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1c;
+}
+
+.spec-admin-role {
+    font-size: 12.5px;
+    color: var(--admin-primary);
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.spec-admin-days {
+    font-size: 11.5px;
+    background: #edf2f7;
+    color: #4a5568;
+    padding: 2px 8px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.spec-admin-bio {
+    font-size: 12.5px;
+    color: #666;
+    line-height: 1.4;
+    margin-bottom: 14px;
+    flex: 1;
+}
+
+.spec-card-actions {
+    display: flex;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f4;
+}
+
+/* ==========================================================================
+   SISTEMA DE NOTIFICACIONES TOAST Y CAMPANILLA EN VIVO
+   ========================================================================== */
+
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    max-width: 380px;
+    width: 100%;
+}
+
+.notification-toast {
+    pointer-events: auto;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border-left: 5px solid #28a745;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    animation: toastSlideIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.3s ease;
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+.toast-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #e9f7df;
+    color: #28a745;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    animation: bellRing 0.5s ease;
+}
+
+@keyframes bellRing {
+    0%, 100% { transform: rotate(0); }
+    20%, 60% { transform: rotate(15deg); }
+    40%, 80% { transform: rotate(-15deg); }
+}
+
+.toast-body {
+    flex: 1;
+}
+
+.toast-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1c;
+    margin-bottom: 2px;
+}
+
+.toast-desc {
+    font-size: 12.5px;
+    color: #555;
+    line-height: 1.35;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #999;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.toast-close:hover {
+    color: #333;
+}
+
+.btn-enable-notifications {
+    background: #fdf3f0;
+    color: #d9534f;
+    border: 1px solid #f2dede;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.btn-enable-notifications.enabled {
+    background: #eafaf1;
+    color: #28a745;
+    border-color: #d4edda;
+}
+
+/* ==========================================================================
+   CALENDARIO TIPO MICROSOFT TEAMS (ADMIN)
+   ========================================================================== */
+
+/* Barra de herramientas superior estilo Teams */
+.teams-cal-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: #ffffff;
+    border: 1px solid var(--admin-border);
+    border-radius: 12px;
+    padding: 12px 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+
+.teams-cal-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.teams-btn-today {
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.teams-btn-today:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.teams-nav-arrows {
+    display: flex;
+    gap: 4px;
+}
+
+.teams-nav-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #4b5563;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.teams-nav-btn:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.teams-range-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+    text-transform: capitalize;
+    letter-spacing: -0.2px;
+}
+
+.teams-cal-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Selector de vistas: Semana laboral / Semana / Día / Mes */
+.teams-view-selector,
+.teams-layout-toggle {
+    display: flex;
+    background: #f3f4f6;
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+}
+
+.teams-view-btn,
+.teams-toggle-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #4b5563;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.teams-view-btn:hover,
+.teams-toggle-btn:hover {
+    color: #111827;
+}
+
+.teams-view-btn.active,
+.teams-toggle-btn.active {
+    background: #ffffff;
+    color: var(--admin-primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    font-weight: 700;
+}
+
+.teams-select-filter {
+    padding: 7px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 500;
+    background: #ffffff;
+    color: #374151;
+    cursor: pointer;
+    outline: none;
+}
+
+.teams-select-filter:focus {
+    border-color: var(--admin-primary);
+}
+
+.teams-btn-primary {
+    background: var(--admin-primary);
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+    box-shadow: 0 1px 3px rgba(124, 58, 237, 0.3);
+}
+
+.teams-btn-primary:hover {
+    background: var(--admin-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(124, 58, 237, 0.4);
+}
+
+/* Tarjeta contenedora del calendario */
+.teams-calendar-card {
+    background: #ffffff;
+    border: 1px solid var(--admin-border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Fila de cabecera de días (Sticky) */
+.teams-cal-header-row {
+    display: grid;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.teams-time-corner {
+    border-right: 1px solid #e5e7eb;
+    background: #fafafa;
+}
+
+.teams-day-col-header {
+    padding: 10px 6px;
+    text-align: center;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    user-select: none;
+    background: #ffffff;
+}
+
+.teams-day-col-header.is-weekend {
+    background: #fafbfc;
+}
+
+.teams-day-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.teams-day-num {
+    font-size: 15px;
+    font-weight: 700;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #1f2937;
+}
+
+/* Resaltado del día de hoy en Teams */
+.teams-day-col-header.is-today .teams-day-name {
+    color: var(--admin-primary);
+}
+
+.teams-day-col-header.is-today .teams-day-num {
+    background: var(--admin-primary);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(124, 58, 237, 0.4);
+}
+
+/* Grilla del calendario con scroll vertical */
+.teams-cal-body-scroll {
+    overflow-y: auto;
+    overflow-x: auto;
+    max-height: 720px;
+    position: relative;
+}
+
+.teams-cal-body-grid {
+    display: grid;
+    position: relative;
+    min-width: 100%;
+}
+
+.teams-time-gutter {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e5e7eb;
+    background: #fafafa;
+    user-select: none;
+}
+
+.teams-time-label {
+    height: 60px;
+    font-size: 11.5px;
+    color: #6b7280;
+    text-align: right;
+    padding-right: 8px;
+    transform: translateY(-8px);
+    font-weight: 500;
+}
+
+/* Columnas de los días */
+.teams-day-column {
+    position: relative;
+    border-right: 1px solid #e5e7eb;
+    background: #ffffff;
+    height: 780px; /* 13 horas x 60px */
+}
+
+.teams-day-column.is-weekend {
+    background: #fafbfc;
+}
+
+.teams-hour-cell {
+    height: 60px;
+    border-bottom: 1px solid #f3f4f6;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.teams-hour-cell:hover {
+    background: rgba(124, 58, 237, 0.04);
+}
+
+/* Línea roja / púrpura de hora actual */
+.teams-now-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #ef4444;
+    z-index: 15;
+    pointer-events: none;
+}
+
+.teams-now-line::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: -3px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ef4444;
+}
+
+/* Tarjetas de citas en la grilla estilo Teams */
+.teams-event-block {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 11.5px;
+    line-height: 1.35;
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 5;
+    border-left: 4px solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.teams-event-block:hover {
+    transform: translateY(-1px);
+    z-index: 25;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+}
+
+.teams-event-block.event-status-confirmada {
+    background: #f5f3ff;
+    border-left-color: #7c3aed;
+    color: #4c1d95;
+}
+
+.teams-event-block.event-status-pendiente {
+    background: #fffbeb;
+    border-left-color: #f59e0b;
+    color: #92400e;
+}
+
+.teams-event-block.event-status-completada {
+    background: #ecfdf5;
+    border-left-color: #10b981;
+    color: #065f46;
+}
+
+.teams-event-block.event-status-cancelada {
+    background: #f3f4f6;
+    border-left-color: #9ca3af;
+    color: #6b7280;
+    opacity: 0.65;
+    text-decoration: line-through;
+}
+
+.teams-event-title {
+    font-weight: 700;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+.teams-event-service {
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0.9;
+}
+
+.teams-event-time {
+    font-size: 10.5px;
+    font-weight: 600;
+    margin-top: 3px;
+    opacity: 0.85;
+}
+
+.teams-event-specialist {
+    font-size: 10px;
+    opacity: 0.75;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Vista Mes de Teams */
+.teams-month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: #ffffff;
+}
+
+.teams-month-header {
+    padding: 10px;
+    text-align: center;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #6b7280;
+    background: #fafafa;
+    border-right: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    text-transform: uppercase;
+}
+
+.teams-month-cell {
+    min-height: 115px;
+    padding: 6px;
+    border-right: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.teams-month-cell:hover {
+    background: #fbfbfd;
+}
+
+.teams-month-cell.is-other-month {
+    background: #f9fafb;
+    color: #9ca3af;
+}
+
+.teams-month-cell.is-today {
+    background: #faf5ff;
+}
+
+.teams-month-day-num {
+    font-size: 12px;
+    font-weight: 700;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #374151;
+}
+
+.teams-month-cell.is-today .teams-month-day-num {
+    background: var(--admin-primary);
+    color: #ffffff;
+}
+
+.teams-month-chip {
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 10.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    border-left: 3px solid;
+    transition: transform 0.1s;
+}
+
+.teams-month-chip:hover {
+    transform: scale(1.02);
+    filter: brightness(0.95);
+}
+
+.teams-month-chip.event-status-confirmada { background: #f5f3ff; border-left-color: #7c3aed; color: #4c1d95; }
+.teams-month-chip.event-status-pendiente { background: #fffbeb; border-left-color: #f59e0b; color: #92400e; }
+.teams-month-chip.event-status-completada { background: #ecfdf5; border-left-color: #10b981; color: #065f46; }
+.teams-month-chip.event-status-cancelada { background: #f3f4f6; border-left-color: #9ca3af; color: #6b7280; text-decoration: line-through; }
+
+/* Vista Día de Teams */
+.teams-day-view-wrap {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    background: #ffffff;
+}
+
+/* Responsive para dispositivos móviles */
+@media (max-width: 992px) {
+    .teams-cal-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .teams-cal-toolbar-left,
+    .teams-cal-toolbar-right {
+        justify-content: space-between;
+    }
+    .teams-cal-body-scroll {
+        max-height: 550px;
+    }
+}
+
+/* ============================================================
+   MODAL FLOTANTE DE DETALLES DE CITA
+   Ventana flotante elegante que aparece al hacer clic en una cita
+   ============================================================ */
+
+/* Overlay con fondo semi-transparente y blur */
+.admin-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 10, 35, 0.72);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10500;
+    padding: 16px;
+    animation: modal-fade-in 0.18s ease;
+}
+
+@keyframes modal-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Tarjeta flotante */
+.teams-detail-modal-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px 28px 24px;
+    width: 100%;
+    max-width: 520px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    position: relative;
+    box-shadow:
+        0 4px 6px rgba(0,0,0,0.05),
+        0 20px 60px rgba(76, 29, 149, 0.22),
+        0 0 0 1px rgba(124, 58, 237, 0.08);
+    animation: card-slide-up 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes card-slide-up {
+    from { transform: translateY(28px) scale(0.97); opacity: 0; }
+    to   { transform: translateY(0) scale(1);       opacity: 1; }
+}
+
+/* Botón de cierre (×) */
+.modal-close-btn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 32px;
+    height: 32px;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: background 0.15s, color 0.15s;
+}
+
+.modal-close-btn:hover {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+/* Encabezado del modal */
+.detail-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid #f5f3ff;
+}
+
+.detail-avatar {
+    width: 54px;
+    height: 54px;
+    background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.15);
+}
+
+/* Filas de detalle */
+.detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 1px solid #f3f4f6;
+    gap: 12px;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    color: #6b7280;
+    font-size: 13px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.detail-value {
+    font-size: 13.5px;
+    color: #111827;
+    text-align: right;
+    word-break: break-word;
+}
+
+/* Caja de notas/modalidad */
+.detail-notes-box {
+    background: #faf5ff;
+    border: 1px solid #e9d5ff;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 10px;
+}
+
+/* Sección de cambio de estado */
+.detail-status-section {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f4;
+}
+
+.detail-status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+/* Botones de estado individuales */
+.btn-change-status {
+    padding: 9px 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s, filter 0.12s;
+    letter-spacing: 0.01em;
+}
+
+.btn-change-status:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.btn-change-status:active {
+    transform: translateY(0);
+}
+
+.status-btn-confirmada {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1.5px solid #6ee7b7;
+}
+
+.status-btn-pendiente {
+    background: #fef3c7;
+    color: #78350f;
+    border: 1.5px solid #fcd34d;
+}
+
+.status-btn-completada {
+    background: #dbeafe;
+    color: #1e3a8a;
+    border: 1.5px solid #93c5fd;
+}
+
+.status-btn-cancelada {
+    background: #fee2e2;
+    color: #7f1d1d;
+    border: 1.5px solid #fca5a5;
+}
+
+/* Botones de acción principales (WA + Eliminar) */
+.detail-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.detail-wa-btn {
+    flex: 3;
+    background: linear-gradient(135deg, #25d366 0%, #1eb855 100%);
+    color: #fff;
+    text-decoration: none;
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: transform 0.12s, box-shadow 0.12s;
+    box-shadow: 0 2px 10px rgba(37, 211, 102, 0.3);
+}
+
+.detail-wa-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(37, 211, 102, 0.4);
+}
+
+.detail-delete-btn {
+    flex: 1;
+    background: #fff1f2;
+    color: #be123c;
+    border: 1.5px solid #fda4af;
+    padding: 11px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.12s, transform 0.12s, box-shadow 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.detail-delete-btn:hover {
+    background: #ffe4e6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(190, 18, 60, 0.15);
+}
+
+/* Responsive: en pantallas pequeñas, la grilla de estados va a 1 columna */
+@media (max-width: 480px) {
+    .teams-detail-modal-card {
+        padding: 20px 16px 18px;
+        border-radius: 14px;
+    }
+
+    .detail-status-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .detail-actions {
+        flex-direction: column;
+    }
+
+    .detail-wa-btn,
+    .detail-delete-btn {
+        flex: none;
+        width: 100%;
+    }
+}
+
+.business-color-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .business-color-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

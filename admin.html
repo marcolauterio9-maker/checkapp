@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title>
+    
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%232563eb'/><path d='M25 50h50M50 25v50' stroke='white' stroke-width='8' stroke-linecap='round'/></svg>">
+</head>
+<body class="admin-body">
+
+<!-- MODAL DE BLOQUEO POR PIN -->
+<div class="auth-overlay" id="auth-overlay">
+    <div class="auth-card">
+        <div class="avatar-icon">🔒</div>
+        <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 6px;">Panel Administrativo</h2>
+        <p style="color: #666; font-size: 13.5px;">Ingresa el PIN de acceso para continuar</p>
+        
+        <form id="auth-pin-form">
+            <input type="password" id="auth-pin-input" class="auth-pin-input" inputmode="numeric" pattern="[0-9]{4,6}" maxlength="6" placeholder="PIN de acceso" autocomplete="off" autofocus required>
+            <div id="auth-error-msg" style="color: #dc3545; font-size: 13px; min-height: 20px; margin-bottom: 10px;"></div>
+            <button type="submit" class="btn-table-action" style="background: var(--admin-primary); color: #fff; width: 100%; padding: 12px; font-size: 15px;">
+                Desbloquear Panel
+            </button>
+            <button type="button" id="btn-forgot-pin" style="background: none; border: 0; color: var(--admin-primary); cursor: pointer; margin-top: 14px; font-size: 13px;">
+                Olvidé mi PIN
+            </button>
+            <div style="margin-top: 14px;">
+                <a href="index.html" style="color: #888; font-size: 12.5px; text-decoration: none;">&larr; Volver al sitio web</a>
+            </div>
+        </form>
+        <div id="auth-recovery-panel" style="display: none;">
+            <p style="color: #666; font-size: 13px; margin: 12px 0;">Te enviaremos un código temporal al correo de recuperación.</p>
+            <div id="auth-recovery-error" style="color: #dc3545; font-size: 13px; min-height: 20px; margin-bottom: 10px;"></div>
+            <button type="button" id="btn-send-recovery-code" class="btn-table-action" style="background: var(--admin-primary); color: #fff; width: 100%; padding: 12px; font-size: 15px;">
+                Enviar código
+            </button>
+            <form id="auth-reset-pin-form" style="display: none;">
+                <input type="text" id="auth-recovery-code" class="auth-pin-input" style="font-size: 17px; letter-spacing: 2px;" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="Código de 6 dígitos" autocomplete="one-time-code" required>
+                <input type="password" id="auth-new-pin" class="form-input" style="width: 100%; padding: 12px; margin-top: 10px; border: 1px solid #ccc; border-radius: 8px;" inputmode="numeric" pattern="[0-9]{4,6}" maxlength="6" placeholder="Nuevo PIN de 4 a 6 dígitos" autocomplete="new-password" required>
+                <button type="submit" class="btn-table-action" style="background: var(--admin-primary); color: #fff; width: 100%; padding: 12px; font-size: 15px; margin-top: 12px;">
+                    Verificar y cambiar PIN
+                </button>
+            </form>
+            <button type="button" id="btn-back-to-login" style="background: none; border: 0; color: #888; cursor: pointer; margin-top: 14px; font-size: 13px;">
+                Volver al inicio de sesión
+            </button>
+        </div>
+        <form id="auth-default-pin-form" style="display: none;">
+            <p style="color: #666; font-size: 13px; margin: 12px 0;">Crea un PIN de seis dígitos para abrir el panel en este navegador.</p>
+            <div id="auth-default-pin-error" style="color: #dc3545; font-size: 13px; min-height: 20px; margin-bottom: 10px;"></div>
+            <input type="password" id="auth-default-new-pin" class="form-input" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px;" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="Crea un PIN nuevo de 6 dígitos" autocomplete="new-password" required>
+            <button type="submit" class="btn-table-action" style="background: var(--admin-primary); color: #fff; width: 100%; padding: 12px; font-size: 15px; margin-top: 12px;">
+                Guardar PIN y continuar
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- CONTENEDOR PRINCIPAL DEL DASHBOARD -->
+<div class="admin-wrapper" id="admin-dashboard-layout" style="display: none;">
+    
+    <!-- BARRA LATERAL (SIDEBAR) -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <span style="font-size: 22px;">✦</span>
+            <div>
+            <h2 id="sidebar-biz-name">Nombre de tu negocio</h2>
+                <span style="font-size: 11px; opacity: 0.6;">Administración</span>
+            </div>
+        </div>
+        
+        <ul class="sidebar-nav">
+            <li class="active" data-section="appointments">
+                <a href="#appointments">
+                    <span>📅</span>
+                    <span>Citas Agendadas</span>
+                </a>
+            </li>
+            <li data-section="booking-steps">
+                <a href="#booking-steps">
+                    <span>🪄</span>
+                    <span>Pasos para reservar</span>
+                </a>
+            </li>
+            <li data-section="services">
+                <a href="#services">
+                    <span>✨</span>
+                    <span>Servicios y precios</span>
+                </a>
+            </li>
+            <li data-section="schedule">
+                <a href="#schedule">
+                    <span>⏰</span>
+                    <span>Horarios de Atención</span>
+                </a>
+            </li>
+            <li data-section="reviews">
+                <a href="#reviews">
+                    <span>⭐</span>
+                    <span>Gestión de Reseñas</span>
+                </a>
+            </li>
+            <li data-section="business">
+                <a href="#business">
+                    <span>⚙️</span>
+                    <span>Datos del Negocio</span>
+                </a>
+            </li>
+            <li data-section="reports">
+                <a href="#reports">
+                    <span>📊</span>
+                    <span>Reporte Mensual & Ganancias</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <a href="index.html" class="btn-sidebar-action" target="_blank">
+                Ver Sitio Web ↗
+            </a>
+            <button id="btn-logout" class="btn-sidebar-action" style="background: rgba(220,53,69,0.2); color: #ff8888;">
+                Cerrar Sesión
+            </button>
+        </div>
+    </aside>
+
+    <!-- ÁREA DE CONTENIDO PRINCIPAL -->
+    <main class="admin-main">
+        <div class="admin-topbar">
+            <h1 id="admin-page-title">Citas Agendadas</h1>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button id="btn-request-notif" class="btn-enable-notifications" title="Activar sonido y notificaciones">
+                    <span>🔔</span>
+                    <span id="notif-btn-text">Activar Alertas</span>
+                </button>
+                <span id="admin-sync-indicator" style="font-size: 12px; color: #28a745; font-weight: 600;">● En Vivo</span>
+            </div>
+        </div>
+
+        <!-- Contenedor flotante de notificaciones en tiempo real -->
+        <div class="toast-container" id="admin-toast-container"></div>
+
+        <div class="admin-content">
+            
+            <!-- ==========================================
+                 SECCIÓN 1: CITAS AGENDADAS
+                 ========================================== -->
+            <section id="section-appointments" class="admin-section">
+                <!-- Métricas -->
+                <div class="metrics-row">
+                    <div class="metric-card">
+                        <div class="metric-label">Citas Totales</div>
+                        <div class="metric-value" id="metric-total-appts">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Pendientes por Confirmar</div>
+                        <div class="metric-value" style="color: #ff9800;" id="metric-pending-appts">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Ingresos Estimados</div>
+                        <div class="metric-value" style="color: var(--admin-primary);" id="metric-total-revenue">$0</div>
+                    </div>
+                </div>
+
+                <!-- BARRA DE HERRAMIENTAS CALENDARIO ESTILO TEAMS -->
+                <div class="teams-cal-toolbar">
+                    <div class="teams-cal-toolbar-left">
+                        <button type="button" class="teams-btn-today" id="btn-teams-today">Hoy</button>
+                        <div class="teams-nav-arrows">
+                            <button type="button" class="teams-nav-btn" id="btn-teams-prev" title="Anterior">&lsaquo;</button>
+                            <button type="button" class="teams-nav-btn" id="btn-teams-next" title="Siguiente">&rsaquo;</button>
+                        </div>
+                        <h2 class="teams-range-title" id="teams-range-label">6 - 12 de octubre de 2026</h2>
+                    </div>
+
+                    <div class="teams-cal-toolbar-right">
+                        <!-- Selector de Vista Teams: Semana laboral / Semana / Día / Mes -->
+                        <div class="teams-view-selector">
+                            <button type="button" class="teams-view-btn" data-view="workWeek">Semana laboral</button>
+                            <button type="button" class="teams-view-btn active" data-view="week">Semana</button>
+                            <button type="button" class="teams-view-btn" data-view="day">Día</button>
+                            <button type="button" class="teams-view-btn" data-view="month">Mes</button>
+                        </div>
+
+                        <!-- Filtro por Estado -->
+                        <select id="teams-filter-status" class="teams-select-filter" title="Filtrar por estado">
+                            <option value="all">Todas las citas</option>
+                            <option value="confirmada">Confirmadas</option>
+                            <option value="pendiente">Pendientes</option>
+                            <option value="completada">Completadas</option>
+                            <option value="cancelada">Canceladas</option>
+                        </select>
+
+                        <!-- Alternar entre Calendario Teams y Tabla tradicional -->
+                        <div class="teams-layout-toggle">
+                            <button type="button" class="teams-toggle-btn active" id="btn-mode-calendar" title="Vista Calendario">
+                                📅 Calendario
+                            </button>
+                            <button type="button" class="teams-toggle-btn" id="btn-mode-table" title="Vista Tabla">
+                                📋 Tabla
+                            </button>
+                        </div>
+
+                        <!-- Botón Nueva Cita estilo Teams "+ Nueva reunión" -->
+                        <button type="button" class="teams-btn-primary" id="btn-open-new-appt">
+                            + Nueva Cita
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CONTENEDOR VISTA CALENDARIO TEAMS -->
+                <div id="teams-calendar-container" class="teams-calendar-card">
+                    <!-- Inyectado dinámicamente por JS: Semana, Día o Mes -->
+                </div>
+
+                <!-- CONTENEDOR VISTA TABLA (ALTERNATIVA) -->
+                <div id="teams-table-container" class="admin-table-card" style="display: none; margin-top: 14px;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Consultante</th>
+                                <th>Servicio(s)</th>
+                                <th>Fecha & Turno</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appts-table-body">
+                            <!-- Filas generadas por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 SECCIÓN: PASOS PARA RESERVAR
+                 ========================================== -->
+            <section id="section-booking-steps" class="admin-section" style="display: none;">
+                <div style="margin-bottom: 18px;">
+                    <h2 style="font-size: 18px;">Pasos para reservar</h2>
+                    <p style="font-size: 13px; color: #666;">Configura las instrucciones que verá el cliente antes de elegir fecha y hora. El orden de la lista es el orden que aparecerá durante la reserva.</p>
+                </div>
+                <div class="admin-table-card" style="padding: 20px; max-width: 100%;">
+                    <div id="booking-steps-admin-list"></div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;">
+                        <button type="button" id="btn-add-booking-step" class="btn-table-action" style="background: #eef1f6; padding: 10px 16px;">+ Agregar paso</button>
+                        <button type="button" id="btn-save-booking-steps" class="btn-table-action" style="background: var(--admin-primary); color: #fff; padding: 10px 16px;">Guardar pasos</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 SECCIÓN 2: LECTURAS Y PRECIOS
+                 ========================================== -->
+            <section id="section-services" class="admin-section" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                    <div>
+                        <h2 style="font-size: 18px;">Catálogo de servicios</h2>
+                        <p style="font-size: 13px; color: #666;">Administra los precios, duraciones y descripciones.</p>
+                    </div>
+                    <button id="btn-add-service" class="btn-table-action" style="background: var(--admin-primary); color:#fff; padding: 10px 18px; font-size: 14px;">
+                        + Nuevo servicio
+                    </button>
+                </div>
+
+                <div class="admin-table-card">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Servicio</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Duración</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="services-table-body">
+                            <!-- Filas generadas por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 SECCIÓN 3: HORARIOS DE ATENCIÓN
+                 ========================================== -->
+            <section id="section-schedule" class="admin-section" style="display: none;">
+                <div style="margin-bottom: 18px;">
+                    <h2 style="font-size: 18px;">Configuración de Horarios</h2>
+                    <p style="font-size: 13px; color: #666;">Define los días laborales y rangos de apertura para las citas.</p>
+                </div>
+
+                <div class="admin-table-card" style="padding: 20px; max-width: 100%;">
+                    <form id="schedule-config-form">
+                        <p id="schedule-timezone-info" style="font-size: 13px; color: #666; margin: 0 0 14px;"></p>
+                        <div id="schedule-days-container" class="schedule-days-container">
+                            <!-- Días inyectados por JS -->
+                        </div>
+
+                        <div style="margin-top: 22px;">
+                            <h3 style="font-size: 15px; margin-bottom: 5px;">Fechas permitidas para reservar</h3>
+                            <p style="font-size: 13px; color: #666; margin-bottom: 12px;">Define desde qué fecha y hasta qué fecha se aceptarán reservas. Ambas fechas son inclusivas; deja las dos vacías para no limitar el rango.</p>
+                            <div style="display: grid; grid-template-columns: repeat(2, minmax(150px, 240px)); gap: 12px; margin-bottom: 18px;">
+                                <label style="font-size: 12px;">Se puede reservar desde
+                                    <input type="date" id="booking-window-start" style="display: block; width: 100%; padding: 7px; border: 1px solid #ccc; border-radius: 5px;">
+                                </label>
+                                <label style="font-size: 12px;">Se puede reservar hasta
+                                    <input type="date" id="booking-window-end" style="display: block; width: 100%; padding: 7px; border: 1px solid #ccc; border-radius: 5px;">
+                                </label>
+                            </div>
+
+                            <h3 style="font-size: 15px; margin-bottom: 5px;">Tiempo fuera / semanas sin atención</h3>
+                            <p style="font-size: 13px; color: #666; margin-bottom: 12px;">Agrega rangos de fechas en los que no se ofrecerán reservas. Las fechas inicial y final se bloquean completas.</p>
+                            <div style="overflow-x: auto;">
+                                <table class="admin-table" style="min-width: 560px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Desde</th>
+                                            <th>Hasta</th>
+                                            <th>Motivo (opcional)</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="time-off-periods-body"></tbody>
+                                </table>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(3, minmax(120px, 1fr)) auto; gap: 8px; align-items: end; margin-top: 12px;">
+                                <label style="font-size: 12px;">Desde
+                                    <input type="date" id="time-off-start" style="display: block; width: 100%; padding: 7px; border: 1px solid #ccc; border-radius: 5px;">
+                                </label>
+                                <label style="font-size: 12px;">Hasta
+                                    <input type="date" id="time-off-end" style="display: block; width: 100%; padding: 7px; border: 1px solid #ccc; border-radius: 5px;">
+                                </label>
+                                <label style="font-size: 12px;">Motivo (opcional)
+                                    <input type="text" id="time-off-reason" maxlength="100" placeholder="Vacaciones" style="display: block; width: 100%; padding: 7px; border: 1px solid #ccc; border-radius: 5px;">
+                                </label>
+                                <button type="button" id="btn-add-time-off" class="btn-table-action" style="background: var(--admin-primary); color: #fff; padding: 8px 12px;">Agregar</button>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid #eee;">
+                            <label style="font-size: 13.5px; font-weight: 600; display: block; margin-bottom: 6px;">
+                                Intervalo entre citas (minutos):
+                            </label>
+                            <select id="schedule-interval-select" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;">
+                                <option value="15">Cada 15 minutos</option>
+                                <option value="30" selected>Cada 30 minutos</option>
+                                <option value="45">Cada 45 minutos</option>
+                                <option value="60">Cada 60 minutos (1 hora)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-table-action" style="background: var(--admin-primary); color: #fff; padding: 12px 24px; font-size: 14px; margin-top: 20px;">
+                            Guardar Horarios
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 SECCIÓN 4: GESTIÓN DE RESEÑAS
+                 ========================================== -->
+            <section id="section-reviews" class="admin-section" style="display: none;">
+                <div style="margin-bottom: 18px;">
+                    <h2 style="font-size: 18px;">Reseñas de Clientes</h2>
+                    <p style="font-size: 13px; color: #666;">Consulta y modera los testimonios visibles en la página web.</p>
+                </div>
+
+                <div class="admin-table-card">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Autor</th>
+                                <th>Calificación</th>
+                                <th>Fecha</th>
+                                <th>Comentario</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reviews-table-body">
+                            <!-- Filas generadas por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 SECCIÓN 5: DATOS DEL NEGOCIO
+                 ========================================== -->
+            <section id="section-business" class="admin-section" style="display: none;">
+                <div style="margin-bottom: 18px;">
+                    <h2 style="font-size: 18px;">Información del Perfil y Negocio</h2>
+                    <p style="font-size: 13px; color: #666;">Actualiza los datos de contacto, redes sociales y promociones del negocio.</p>
+                </div>
+
+                <div class="admin-table-card" style="padding: 24px; max-width: 840px;">
+                    <form id="business-config-form">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Nombre del Negocio:</label>
+                                <input type="text" id="biz-input-name" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" required>
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Especialidad / Subtítulo:</label>
+                                <input type="text" id="biz-input-spec" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" required>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px;">
+                            <div class="form-group">
+                                <label for="biz-input-tagline" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Frase del sitio / título del navegador:</label>
+                                <input type="text" id="biz-input-tagline" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                            </div>
+                            <div class="form-group">
+                                <label for="biz-input-address" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Dirección o ubicación:</label>
+                                <input type="text" id="biz-input-address" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 10px;">
+                            <label style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" id="biz-input-verified-badge">
+                                Mostrar insignia de verificación en el perfil
+                            </label>
+                        </div>
+
+                        <div class="business-image-upload-grid">
+                            <div class="business-image-upload">
+                                <label for="biz-upload-avatar">Foto de perfil o logo</label>
+                                <input type="hidden" id="biz-input-avatar">
+                                <input type="file" id="biz-upload-avatar" accept="image/jpeg,image/png,image/webp">
+                                <img id="biz-preview-avatar" class="business-image-preview business-image-avatar" alt="Vista previa de perfil" hidden>
+                                <button type="button" class="business-image-remove" id="biz-remove-avatar">Quitar foto</button>
+                            </div>
+                            <div class="business-image-upload">
+                                <label for="biz-upload-cover">Foto de portada</label>
+                                <input type="hidden" id="biz-input-cover">
+                                <input type="file" id="biz-upload-cover" accept="image/jpeg,image/png,image/webp">
+                                <img id="biz-preview-cover" class="business-image-preview business-image-cover" alt="Vista previa de portada" hidden>
+                                <button type="button" class="business-image-remove" id="biz-remove-cover">Quitar foto</button>
+                            </div>
+                        </div>
+
+                        <div class="business-gallery-editor">
+                            <h3>Fotos de la galería</h3>
+                            <label for="biz-upload-gallery">Subir fotos</label>
+                            <input type="file" id="biz-upload-gallery" accept="image/jpeg,image/png,image/webp" multiple>
+                            <div id="biz-gallery-preview" class="business-gallery-preview"></div>
+                        </div>
+
+                        <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid #eee;">
+                            <h3 style="font-size: 15px; margin-bottom: 10px;">Apariencia</h3>
+                            <div class="business-color-grid">
+                                <div class="form-group">
+                                    <label for="biz-input-primary-color" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Color principal:</label>
+                                    <input type="color" id="biz-input-primary-color" style="width: 100%; height: 40px; padding: 3px;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="biz-input-secondary-color" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Color secundario:</label>
+                                    <input type="color" id="biz-input-secondary-color" style="width: 100%; height: 40px; padding: 3px;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="biz-input-background-color" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Fondo de la aplicación:</label>
+                                    <input type="color" id="biz-input-background-color" style="width: 100%; height: 40px; padding: 3px;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="biz-input-font-family" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Tipografía:</label>
+                                    <select id="biz-input-font-family" class="form-input" style="width: 100%; height: 40px; padding: 6px;">
+                                        <option value="system">Moderna</option>
+                                        <option value="serif">Clásica</option>
+                                        <option value="rounded">Redondeada</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <p style="font-size: 12px; color: #777;">Los cambios de color se aplican al sitio público y al flujo de reservas.</p>
+                        </div>
+
+                        <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid #eee;">
+                            <h3 style="font-size: 15px; margin-bottom: 10px;">Títulos y textos principales</h3>
+                            <div class="form-group">
+                                <label for="biz-copy-home-welcome" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Mensaje principal del inicio:</label>
+                                <input type="text" id="biz-copy-home-welcome" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                            </div>
+                            <div class="form-group" style="margin-top: 10px;">
+                                <label for="biz-copy-reserve-button" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Texto del botón de reserva:</label>
+                                <input type="text" id="biz-copy-reserve-button" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px;">
+                                <div class="form-group">
+                                    <label for="biz-copy-featured-services" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Título de servicios destacados:</label>
+                                    <input type="text" id="biz-copy-featured-services" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="biz-copy-catalog-link" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Enlace al catálogo:</label>
+                                    <input type="text" id="biz-copy-catalog-link" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px;">
+                                <div class="form-group">
+                                    <label for="biz-copy-tab-services" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Pestaña de servicios:</label>
+                                    <input type="text" id="biz-copy-tab-services" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="biz-copy-tab-gallery" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Pestaña de galería:</label>
+                                    <input type="text" id="biz-copy-tab-gallery" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="biz-copy-tab-reviews" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Pestaña de reseñas:</label>
+                                    <input type="text" id="biz-copy-tab-reviews" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="biz-copy-tab-schedule" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Pestaña de horarios:</label>
+                                    <input type="text" id="biz-copy-tab-schedule" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-top: 10px;">
+                                <label for="biz-copy-booking-title" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Título de la página de reserva:</label>
+                                <input type="text" id="biz-copy-booking-title" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px;">
+                                <div class="form-group">
+                                    <label for="biz-copy-schedule-title" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Título de horarios:</label>
+                                    <input type="text" id="biz-copy-schedule-title" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="biz-copy-confirmation-title" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Título de confirmación:</label>
+                                    <input type="text" id="biz-copy-confirmation-title" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px;">
+                                <div class="form-group">
+                                    <label for="biz-copy-booking-services" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Paso de selección:</label>
+                                    <input type="text" id="biz-copy-booking-services" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="biz-copy-booking-instructions" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Paso de instrucciones:</label>
+                                    <input type="text" id="biz-copy-booking-instructions" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="biz-copy-booking-date-time" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Paso de fecha y hora:</label>
+                                    <input type="text" id="biz-copy-booking-date-time" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="biz-copy-booking-client" style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Paso de datos:</label>
+                                    <input type="text" id="biz-copy-booking-client" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px;">
+                            <div class="form-group">
+                                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">WhatsApp (con lada, ej: 526624511670):</label>
+                                <input type="text" id="biz-input-whatsapp" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Teléfono directo:</label>
+                                <input type="text" id="biz-input-phone" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px;">
+                            <div class="form-group">
+                                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Instagram URL:</label>
+                                <input type="text" id="biz-input-instagram" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">PIN de Acceso Administrador:</label>
+                                <input type="password" id="biz-input-pin" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="PIN nuevo de 6 dígitos (opcional)">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 12px;">
+                            <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Notas de Consulta / Modalidades:</label>
+                            <textarea id="biz-input-cabin" class="form-textarea" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; min-height: 60px;"></textarea>
+                        </div>
+
+                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee;">
+                            <h3 style="font-size: 15px; margin-bottom: 10px;">Banner Promocional</h3>
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" id="biz-input-promo-active">
+                                    Mostrar promociones en el inicio
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Título de la Promoción:</label>
+                                <input type="text" id="biz-input-promo-title" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                            </div>
+                            <div class="form-group" style="margin-top: 10px;">
+                                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Detalles de la Promoción:</label>
+                                <textarea id="biz-input-promo-desc" class="form-textarea" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; min-height: 60px;"></textarea>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-table-action" style="background: var(--admin-primary); color: #fff; padding: 12px 24px; font-size: 14px; margin-top: 20px;">
+                            Guardar Información del Negocio
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 SECCIÓN 7: REPORTE MENSUAL & GANANCIAS
+                 ========================================== -->
+            <section id="section-reports" class="admin-section" style="display: none;">
+                <div class="admin-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 24px;">
+                        <div>
+                            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">📊 Reporte Mensual de Servicios</h2>
+                            <p style="font-size: 13px; color: #777;">Resumen de todas las citas y ganancias del período seleccionado.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <select id="report-month-select" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                <option value="0">Enero</option>
+                                <option value="1">Febrero</option>
+                                <option value="2">Marzo</option>
+                                <option value="3">Abril</option>
+                                <option value="4">Mayo</option>
+                                <option value="5">Junio</option>
+                                <option value="6">Julio</option>
+                                <option value="7">Agosto</option>
+                                <option value="8">Septiembre</option>
+                                <option value="9">Octubre</option>
+                                <option value="10">Noviembre</option>
+                                <option value="11">Diciembre</option>
+                            </select>
+                            <select id="report-year-select" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                <!-- Años inyectados por JS -->
+                            </select>
+                            <button id="btn-generate-report" style="background: var(--admin-primary); color: #fff; border: none; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">
+                                🔍 Generar Reporte
+                            </button>
+                            <button id="btn-export-excel" style="background: #1d6f42; color: #fff; border: none; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; display: none;">
+                                📥 Exportar Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Métricas del reporte -->
+                    <div id="report-metrics" style="display: none; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 24px;">
+                        <div class="metric-card" style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border: 1px solid #a5d6a7;">
+                            <div class="metric-value" id="rpt-metric-citas" style="color: #2e7d32;">0</div>
+                            <div class="metric-label">Citas del Mes</div>
+                        </div>
+                        <div class="metric-card" style="background: linear-gradient(135deg, #f3e5f5, #e1bee7); border: 1px solid #ce93d8;">
+                            <div class="metric-value" id="rpt-metric-ingresos" style="color: var(--admin-primary);">$0</div>
+                            <div class="metric-label">Ingresos Totales</div>
+                        </div>
+                        <div class="metric-card" style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); border: 1px solid #90caf9;">
+                            <div class="metric-value" id="rpt-metric-promedio" style="color: #1565c0;">$0</div>
+                            <div class="metric-label">Promedio por Cita</div>
+                        </div>
+                        <div class="metric-card" style="background: linear-gradient(135deg, #fff8e1, #ffecb3); border: 1px solid #ffe082;">
+                            <div class="metric-value" id="rpt-metric-servicios" style="color: #e65100;">0</div>
+                            <div class="metric-label">Servicios Realizados</div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de servicios del reporte -->
+                    <div id="report-table-wrap" style="display: none;">
+                        <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 12px;" id="report-period-title">Detalle de Citas</h3>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                                <thead>
+                                    <tr style="background: #f8f9fa; text-align: left;">
+                                        <th style="padding: 10px 12px; border-bottom: 2px solid #dee2e6;">Cliente</th>
+                                        <th style="padding: 10px 12px; border-bottom: 2px solid #dee2e6;">Fecha</th>
+                                        <th style="padding: 10px 12px; border-bottom: 2px solid #dee2e6;">Hora</th>
+                                        <th style="padding: 10px 12px; border-bottom: 2px solid #dee2e6;">Servicios</th>
+                                        <th style="padding: 10px 12px; border-bottom: 2px solid #dee2e6; text-align: right;">Total</th>
+                                        <th style="padding: 10px 12px; border-bottom: 2px solid #dee2e6;">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="report-table-body">
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background: #f8f9fa; font-weight: 700;">
+                                        <td colspan="4" style="padding: 12px; border-top: 2px solid #dee2e6; font-size: 14px;">💰 TOTAL DEL MES</td>
+                                        <td style="padding: 12px; border-top: 2px solid #dee2e6; text-align: right; color: var(--admin-primary); font-size: 15px;" id="rpt-total-row">$0 MXN</td>
+                                        <td style="border-top: 2px solid #dee2e6;"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <!-- Desglose por servicio -->
+                        <div style="margin-top: 28px;">
+                            <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 12px;">📈 Servicios Más Realizados</h3>
+                            <div id="report-services-breakdown" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div id="report-empty" style="text-align: center; padding: 48px 20px; display: none;">
+                        <div style="font-size: 48px; margin-bottom: 12px;">📭</div>
+                        <div style="font-size: 16px; font-weight: 600; color: #555;">Sin citas en este período</div>
+                        <div style="font-size: 13px; color: #999; margin-top: 6px;">No se encontraron citas para el mes y año seleccionados.</div>
+                    </div>
+
+                    <!-- Placeholder inicial -->
+                    <div id="report-placeholder" style="text-align: center; padding: 48px 20px;">
+                        <div style="font-size: 56px; margin-bottom: 12px;">📊</div>
+                        <div style="font-size: 16px; font-weight: 600; color: #555;">Selecciona el mes y año</div>
+                        <div style="font-size: 13px; color: #999; margin-top: 6px;">Elige el período y haz clic en "Generar Reporte" para ver las ganancias y citas del mes.</div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+</div>
+
+<!-- MODAL: AGREGAR / EDITAR SERVICIO -->
+<!-- MODAL: AGREGAR / EDITAR LECTURA -->
+<div class="auth-overlay" id="service-modal" style="display: none;">
+    <div class="auth-card" style="max-width: 480px; text-align: left;">
+        <h2 id="service-modal-title" style="font-size: 18px; margin-bottom: 14px;">Nuevo servicio</h2>
+        <form id="service-form">
+            <input type="hidden" id="modal-service-id">
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Nombre del servicio:</label>
+                <input type="text" id="modal-service-name" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" placeholder="Ej. Consulta inicial" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Categoría:</label>
+                <select id="modal-service-category" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                    <!-- Opciones inyectadas por JS -->
+                </select>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                <div>
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Precio ($ MXN):</label>
+                    <input type="number" id="modal-service-price" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" required>
+                </div>
+                <div>
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Duración (minutos):</label>
+                    <input type="number" id="modal-service-duration" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" value="45" required>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 16px;">
+                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Descripción:</label>
+                <textarea id="modal-service-desc" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; min-height: 60px;"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button type="button" id="btn-close-service-modal" class="btn-table-action" style="background:#eee; flex: 1; padding: 10px;">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn-table-action" style="background: var(--admin-primary); color: #fff; flex: 2; padding: 10px;">
+                    Guardar servicio
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL FLOTANTE: DETALLES DE CITA / CONSULTA DE TAROT -->
+<div class="admin-modal-overlay" id="appt-detail-modal" style="display: none;">
+    <div class="teams-detail-modal-card">
+        <button type="button" id="btn-close-detail-modal" class="modal-close-btn" title="Cerrar">&times;</button>
+        
+        <!-- Encabezado de la Ventana Flotante -->
+        <div class="detail-header">
+            <div class="detail-avatar" id="modal-detail-avatar">•</div>
+            <div style="flex: 1;">
+                <span class="status-badge" id="modal-detail-status-badge">Confirmada</span>
+                <h2 id="modal-detail-title" style="font-size: 19px; font-weight: 700; color: #1e1b4b; margin: 6px 0 0 0;">Nombre del Consultante</h2>
+            </div>
+        </div>
+
+        <!-- Cuerpo con Detalles de la Consulta -->
+        <div class="teams-detail-body" style="font-size: 13.5px; display: flex; flex-direction: column; gap: 4px; margin: 12px 0;">
+            <div class="detail-row">
+                <span class="detail-label">👤 Consultante:</span>
+                <strong class="detail-value" id="modal-detail-client">-</strong>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">📞 Teléfono / WA:</span>
+                <span class="detail-value" id="modal-detail-phone">-</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">✉️ Correo:</span>
+                <span class="detail-value" id="modal-detail-email">-</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Servicio:</span>
+                <strong class="detail-value" id="modal-detail-services" style="color: var(--admin-primary); text-align: right; max-width: 65%;">-</strong>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">📅 Fecha & Horario:</span>
+                <span class="detail-value" id="modal-detail-datetime">-</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">⏰ Duración:</span>
+                <span class="detail-value" id="modal-detail-duration">-</span>
+            </div>
+            <div class="detail-row" style="background: #faf5ff; padding: 10px 12px; border-radius: 8px; border: 1px dashed #d8b4fe; margin-top: 6px;">
+                <span class="detail-label" style="color: #6b21a8; font-weight: 700;">💰 Total a Cobrar:</span>
+                <strong class="detail-value" id="modal-detail-price" style="color: #6b21a8; font-size: 16px;">$0 MXN</strong>
+            </div>
+
+            <!-- Modalidad y Notas -->
+            <div id="modal-detail-notes-wrap" class="detail-notes-box">
+                <span style="color: #555; font-weight: 600; display: block; margin-bottom: 4px; font-size: 12px;">📝 Modalidad y notas del servicio:</span>
+                <p id="modal-detail-notes" style="color: #222; margin: 0; font-size: 13px; line-height: 1.4;">-</p>
+            </div>
+        </div>
+
+        <!-- Selector de Estado de la Cita -->
+        <div class="detail-status-section">
+            <label style="font-size: 12.5px; font-weight: 600; color: #555; display: block; margin-bottom: 8px;">Cambiar Estado de la Consulta:</label>
+            <div class="detail-status-grid">
+                <button type="button" class="btn-change-status status-btn-confirmada" data-status="confirmada">✓ Confirmada</button>
+                <button type="button" class="btn-change-status status-btn-pendiente" data-status="pendiente">⏳ Pendiente</button>
+                <button type="button" class="btn-change-status status-btn-completada" data-status="completada">✨ Completada</button>
+                <button type="button" class="btn-change-status status-btn-cancelada" data-status="cancelada">✕ Cancelada</button>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="detail-actions">
+            <a href="#" id="modal-detail-wa-btn" target="_blank" class="detail-wa-btn" title="Contactar por WhatsApp">
+                💬 Enviar WhatsApp al Consultante
+            </a>
+            <button type="button" id="modal-detail-delete-btn" class="detail-delete-btn" title="Eliminar Cita">
+                🗑️ Eliminar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: RESERVAR NUEVA CITA MANUALMENTE (ESTILO TEAMS) -->
+<div class="admin-modal-overlay" id="new-appt-admin-modal" style="display: none;">
+    <div class="teams-detail-modal-card" style="max-height: 90vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h2 style="font-size: 18px; font-weight: 700; color: #1e1b4b; margin: 0;">📅 Registrar nueva cita</h2>
+            <button type="button" id="btn-close-new-appt-modal" class="modal-close-btn" style="position: static;">&times;</button>
+        </div>
+        <form id="new-appt-admin-form">
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Nombre del Consultante: *</label>
+                <input type="text" id="manual-client-name" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" placeholder="Ej. Camila Navarro" required>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                <div>
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">WhatsApp / Teléfono: *</label>
+                    <input type="tel" id="manual-client-phone" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" placeholder="6621819929" required>
+                </div>
+                <div>
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Correo (opcional):</label>
+                    <input type="email" id="manual-client-email" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" placeholder="cliente@correo.com">
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Servicio: *</label>
+                <select id="manual-service-select" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" required>
+                    <!-- Inyectado por JS -->
+                </select>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                <div>
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Fecha: *</label>
+                    <input type="date" id="manual-date" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" required>
+                </div>
+                <div>
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Hora de Inicio: *</label>
+                    <input type="time" id="manual-time" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" value="16:00" required>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 16px;">
+                <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px;">Modalidad y Notas:</label>
+                <textarea id="manual-notes" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; min-height: 55px;" placeholder="Ej. Sesión online vía WhatsApp / Videollamada"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button type="button" id="btn-close-new-appt-modal" class="btn-table-action" style="background:#eee; flex: 1; padding: 10px;">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn-table-action" style="background: var(--admin-primary); color: #fff; flex: 2; padding: 10px;">
+                    Reservar Cita en Calendario
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="js/xlsx.full.min.js"></script>
+<script src="js/data.js?v=20261014-1"></script>
+<script src="js/admin.js?v=20261014-1"></script>
+
+</body>
+</html>
